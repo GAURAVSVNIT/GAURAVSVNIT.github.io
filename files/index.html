@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gaurav Damor — SVNIT</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&family=Space+Grotesk:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{
+      --bg:#0a0c0f;--bg2:#0f1217;--bg3:#141820;
+      --green:#00ff88;--green-dim:#00cc6a;--green-faint:rgba(0,255,136,0.06);
+      --amber:#f5a623;--blue:#4fc3f7;--purple:#c084fc;--red:#ff5f5f;
+      --text:#c8d0dc;--text-dim:#6b7585;--text-bright:#e8edf5;
+      --border:rgba(0,255,136,0.12);--border-dim:rgba(255,255,255,0.06);
+      --mono:'JetBrains Mono',monospace;--sans:'Space Grotesk',sans-serif;
+    }
+    html{scroll-behavior:smooth}
+    body{background:var(--bg);color:var(--text);font-family:var(--mono);min-height:100vh;overflow-x:hidden}
+    body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.03) 2px,rgba(0,0,0,0.03) 4px);pointer-events:none;z-index:9999}
+    body::after{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(0,255,136,0.025) 1px,transparent 1px),linear-gradient(90deg,rgba(0,255,136,0.025) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0}
+
+    /* NAV */
+    nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(10,12,15,0.93);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:0 2rem;height:56px;display:flex;align-items:center;justify-content:space-between}
+    .nav-logo{font-size:13px;font-weight:700;color:var(--green);letter-spacing:0.08em}
+    .nav-logo span{color:var(--text-dim);font-weight:400}
+    .nav-links{display:flex;gap:1.75rem;list-style:none}
+    .nav-links a{font-size:11px;color:var(--text-dim);text-decoration:none;letter-spacing:0.07em;transition:color 0.2s}
+    .nav-links a:hover{color:var(--green)}
+
+    /* HERO */
+    .hero{position:relative;z-index:1;min-height:100vh;display:flex;align-items:center;padding:80px 2rem 4rem;max-width:920px;margin:0 auto}
+    .hero-inner{width:100%}
+    .prompt-line{display:flex;align-items:center;gap:0.5rem;margin-bottom:2rem}
+    .prompt-sym{color:var(--green);font-size:14px}
+    .prompt-path{font-size:12px;color:var(--text-dim)}
+    .cursor{display:inline-block;width:10px;height:18px;background:var(--green);animation:blink 1s step-end infinite;vertical-align:middle}
+    @keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+
+    .hero-name{font-size:clamp(2.4rem,6vw,5rem);font-weight:700;color:var(--text-bright);line-height:1.05;letter-spacing:-0.02em;margin-bottom:0.4rem}
+    .hero-name .accent{color:var(--green)}
+    .hero-subtitle{font-family:var(--sans);font-size:clamp(0.95rem,2vw,1.15rem);font-weight:300;color:var(--text-dim);margin-bottom:1.75rem;letter-spacing:0.04em}
+
+    .hero-bio{font-size:13px;color:var(--text);line-height:1.9;max-width:580px;margin-bottom:2rem;border-left:2px solid var(--green);padding-left:1rem}
+    .comment{color:var(--text-dim)}.keyword{color:var(--blue)}.string{color:var(--amber)}.number{color:var(--purple)}
+
+    .badge-row{display:flex;gap:0.5rem;flex-wrap:wrap;margin-bottom:2.5rem}
+    .badge{font-size:10px;padding:4px 10px;border-radius:3px;letter-spacing:0.08em;border:1px solid}
+    .badge-gold{color:var(--amber);border-color:rgba(245,166,35,0.3);background:rgba(245,166,35,0.06)}
+    .badge-green{color:var(--green);border-color:rgba(0,255,136,0.25);background:rgba(0,255,136,0.05)}
+    .badge-blue{color:var(--blue);border-color:rgba(79,195,247,0.25);background:rgba(79,195,247,0.05)}
+    .badge-purple{color:var(--purple);border-color:rgba(192,132,252,0.25);background:rgba(192,132,252,0.05)}
+
+    .cta-row{display:flex;gap:0.75rem;flex-wrap:wrap}
+    .btn{font-family:var(--mono);font-size:12px;padding:9px 20px;border-radius:4px;text-decoration:none;letter-spacing:0.06em;transition:all 0.2s;cursor:pointer;display:inline-block}
+    .btn-primary{background:var(--green);color:#0a0c0f;font-weight:700;border:none}
+    .btn-primary:hover{background:var(--green-dim);transform:translateY(-1px)}
+    .btn-ghost{background:transparent;color:var(--green);border:1px solid var(--green)}
+    .btn-ghost:hover{background:var(--green-faint);transform:translateY(-1px)}
+
+    /* SECTIONS */
+    section{position:relative;z-index:1;max-width:920px;margin:0 auto;padding:4.5rem 2rem}
+    .section-label{font-size:11px;color:var(--green);letter-spacing:0.2em;text-transform:uppercase;margin-bottom:0.4rem}
+    .section-title{font-size:clamp(1.3rem,2.8vw,1.9rem);font-weight:700;color:var(--text-bright);margin-bottom:2.25rem;letter-spacing:-0.01em}
+    .divider{height:1px;background:linear-gradient(90deg,var(--green),transparent);margin-bottom:1.75rem;opacity:0.28}
+
+    /* SKILLS */
+    .skills-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:1rem}
+    .skill-card{background:var(--bg2);border:1px solid var(--border-dim);border-radius:6px;padding:1rem 1.2rem;transition:border-color 0.2s,background 0.2s}
+    .skill-card:hover{border-color:var(--border);background:var(--bg3)}
+    .skill-card-label{font-size:10px;color:var(--text-dim);letter-spacing:0.15em;text-transform:uppercase;margin-bottom:0.55rem}
+    .skill-tags{display:flex;flex-wrap:wrap;gap:5px}
+    .tag{font-size:11px;padding:3px 8px;border-radius:3px;background:rgba(0,255,136,0.08);color:var(--green);border:1px solid rgba(0,255,136,0.15)}
+    .tag.blue{background:rgba(79,195,247,0.08);color:var(--blue);border-color:rgba(79,195,247,0.15)}
+    .tag.amber{background:rgba(245,166,35,0.08);color:var(--amber);border-color:rgba(245,166,35,0.15)}
+    .tag.purple{background:rgba(192,132,252,0.08);color:var(--purple);border-color:rgba(192,132,252,0.15)}
+
+    /* EXPERIENCE */
+    .exp-list{display:flex;flex-direction:column;gap:1.25rem}
+    .exp-card{background:var(--bg2);border:1px solid var(--border-dim);border-radius:8px;padding:1.5rem;position:relative;overflow:hidden;transition:border-color 0.2s}
+    .exp-card::before{content:'';position:absolute;top:0;left:0;bottom:0;width:3px}
+    .exp-card.blue-accent::before{background:var(--blue)}
+    .exp-card.purple-accent::before{background:var(--purple)}
+    .exp-card:hover{border-color:var(--border)}
+    .exp-header{display:flex;justify-content:space-between;align-items:flex-start;gap:1rem;margin-bottom:0.3rem;flex-wrap:wrap}
+    .exp-role{font-size:0.95rem;font-weight:700;color:var(--text-bright)}
+    .exp-date{font-size:11px;color:var(--text-dim);white-space:nowrap}
+    .exp-company{font-family:var(--sans);font-size:13px;margin-bottom:0.85rem}
+    .exp-company a{color:var(--blue);text-decoration:none}
+    .exp-company a:hover{text-decoration:underline}
+    .exp-company .remote{font-size:11px;color:var(--text-dim);margin-left:0.5rem;padding:1px 6px;border:1px solid var(--border-dim);border-radius:2px}
+    .exp-bullets{list-style:none;display:flex;flex-direction:column;gap:0.5rem}
+    .exp-bullets li{font-family:var(--sans);font-size:13px;color:var(--text-dim);line-height:1.65;display:flex;gap:0.6rem;align-items:flex-start}
+    .exp-bullets li::before{content:'▸';color:var(--blue);flex-shrink:0;margin-top:2px;font-size:10px}
+
+    /* PUBLICATIONS */
+    .pub-card{background:var(--bg2);border:1px solid var(--border-dim);border-radius:10px;padding:1.6rem;margin-bottom:1.25rem;text-decoration:none;color:inherit;display:block;transition:all 0.2s;position:relative;overflow:hidden}
+    .pub-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;opacity:0;transition:opacity 0.2s}
+    .pub-card.gold::before{background:linear-gradient(90deg,var(--amber),transparent)}
+    .pub-card.blue-pub::before{background:linear-gradient(90deg,var(--blue),transparent)}
+    .pub-card:hover{border-color:var(--border);transform:translateY(-2px)}
+    .pub-card:hover::before{opacity:1}
+    .pub-top{display:flex;justify-content:space-between;align-items:flex-start;gap:1rem;margin-bottom:0.65rem;flex-wrap:wrap}
+    .pub-venue{font-size:10px;letter-spacing:0.13em;text-transform:uppercase;padding:3px 10px;border-radius:3px;border:1px solid}
+    .pub-venue.gold{color:var(--amber);border-color:rgba(245,166,35,0.3);background:rgba(245,166,35,0.06)}
+    .pub-venue.blue{color:var(--blue);border-color:rgba(79,195,247,0.25);background:rgba(79,195,247,0.05)}
+    .pub-rank-badge{font-size:11px;font-weight:700;padding:3px 10px;border-radius:3px}
+    .pub-rank-badge.gold{color:var(--amber);background:rgba(245,166,35,0.1);border:1px solid rgba(245,166,35,0.3)}
+    .pub-rank-badge.blue{color:var(--blue);background:rgba(79,195,247,0.08);border:1px solid rgba(79,195,247,0.2)}
+    .pub-title{font-size:0.95rem;font-weight:700;color:var(--text-bright);letter-spacing:-0.01em;margin-bottom:0.35rem;line-height:1.3}
+    .pub-authors{font-family:var(--sans);font-size:12px;color:var(--text-dim);margin-bottom:0.65rem}
+    .pub-authors strong{color:var(--text)}
+    .pub-abstract{font-family:var(--sans);font-size:13px;color:var(--text-dim);line-height:1.65;margin-bottom:0.85rem}
+    .pub-stats{display:flex;gap:1.25rem;flex-wrap:wrap;margin-bottom:0.85rem}
+    .pub-stat{font-size:11px;color:var(--text-dim)}
+    .pub-stat span{color:var(--text-bright);font-weight:700}
+    .pub-links{display:flex;gap:0.6rem;flex-wrap:wrap}
+    .pub-link{font-size:11px;padding:4px 10px;border-radius:3px;text-decoration:none;transition:background 0.2s;cursor:pointer}
+    .pub-link.green{color:var(--green);border:1px solid rgba(0,255,136,0.2)}
+    .pub-link.green:hover{background:var(--green-faint)}
+    .pub-link.gold-l{color:var(--amber);border:1px solid rgba(245,166,35,0.25)}
+    .pub-link.gold-l:hover{background:rgba(245,166,35,0.06)}
+    .pub-link.blue-l{color:var(--blue);border:1px solid rgba(79,195,247,0.25)}
+    .pub-link.blue-l:hover{background:rgba(79,195,247,0.06)}
+
+    /* PROJECTS */
+    .projects-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:1.25rem}
+    .project-card{background:var(--bg2);border:1px solid var(--border-dim);border-radius:8px;padding:1.4rem;text-decoration:none;color:inherit;display:block;transition:all 0.2s;position:relative;overflow:hidden}
+    .project-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;opacity:0;transition:opacity 0.2s}
+    .project-card.green-proj::before{background:linear-gradient(90deg,var(--green),transparent)}
+    .project-card.blue-proj::before{background:linear-gradient(90deg,var(--blue),transparent)}
+    .project-card.amber-proj::before{background:linear-gradient(90deg,var(--amber),transparent)}
+    .project-card:hover{border-color:var(--border);transform:translateY(-3px)}
+    .project-card:hover::before{opacity:1}
+    .project-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:0.6rem}
+    .project-icon{font-size:10px;color:var(--text-dim);letter-spacing:0.1em}
+    .project-arrow{color:var(--text-dim);font-size:14px;transition:color 0.2s,transform 0.2s}
+    .project-card:hover .project-arrow{transform:translate(2px,-2px)}
+    .project-card.green-proj:hover .project-arrow{color:var(--green)}
+    .project-card.blue-proj:hover .project-arrow{color:var(--blue)}
+    .project-card.amber-proj:hover .project-arrow{color:var(--amber)}
+    .project-name{font-size:0.95rem;font-weight:700;color:var(--text-bright);margin-bottom:0.35rem}
+    .project-year{font-size:10px;color:var(--text-dim);margin-bottom:0.6rem}
+    .project-desc{font-family:var(--sans);font-size:13px;color:var(--text-dim);line-height:1.62;margin-bottom:0.85rem}
+    .project-bullets{list-style:none;margin-bottom:0.85rem}
+    .project-bullets li{font-family:var(--sans);font-size:12px;color:var(--text-dim);line-height:1.6;display:flex;gap:0.5rem;align-items:flex-start;margin-bottom:0.35rem}
+    .project-bullets li::before{content:'·';flex-shrink:0;color:var(--text-dim);margin-top:1px}
+    .project-tech{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:0.85rem}
+    .project-tech span{font-size:10px;padding:2px 7px;border-radius:3px}
+    .project-tech span.green-t{background:rgba(0,255,136,0.07);color:var(--green);border:1px solid rgba(0,255,136,0.15)}
+    .project-tech span.blue-t{background:rgba(79,195,247,0.07);color:var(--blue);border:1px solid rgba(79,195,247,0.15)}
+    .project-tech span.amber-t{background:rgba(245,166,35,0.07);color:var(--amber);border:1px solid rgba(245,166,35,0.15)}
+    .project-link{font-size:11px;padding:4px 10px;border-radius:3px;border:1px solid var(--border);color:var(--green);text-decoration:none;transition:background 0.2s}
+    .project-link:hover{background:var(--green-faint)}
+
+    /* ACHIEVEMENTS */
+    .achieve-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:1rem}
+    .achieve-card{background:var(--bg2);border:1px solid var(--border-dim);border-radius:8px;padding:1.25rem;display:flex;align-items:flex-start;gap:1rem;transition:border-color 0.2s}
+    .achieve-card:hover{border-color:var(--border)}
+    .achieve-icon{font-size:1.4rem;flex-shrink:0;margin-top:2px}
+    .achieve-title{font-size:13px;font-weight:700;color:var(--text-bright);margin-bottom:0.25rem;line-height:1.3}
+    .achieve-sub{font-family:var(--sans);font-size:12px;color:var(--text-dim);line-height:1.5}
+
+    /* POSITIONS */
+    .positions-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:1rem}
+    .position-card{background:var(--bg2);border:1px solid var(--border-dim);border-radius:6px;padding:1rem 1.2rem;transition:border-color 0.2s}
+    .position-card:hover{border-color:var(--border)}
+    .position-role{font-size:12px;font-weight:700;color:var(--text-bright);margin-bottom:0.2rem}
+    .position-org{font-family:var(--sans);font-size:12px;color:var(--text-dim)}
+    .position-dot{display:inline-block;width:6px;height:6px;border-radius:50%;margin-right:6px;vertical-align:middle}
+
+    /* CONTACT */
+    .contact-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(175px,1fr));gap:1rem}
+    .contact-item{display:flex;align-items:center;gap:0.75rem;background:var(--bg2);border:1px solid var(--border-dim);border-radius:6px;padding:0.9rem 1.1rem;text-decoration:none;color:var(--text);font-size:11px;transition:all 0.2s;letter-spacing:0.02em}
+    .contact-item:hover{border-color:var(--border);color:var(--green)}
+    .contact-item svg{flex-shrink:0}
+
+    footer{position:relative;z-index:1;text-align:center;padding:2rem;font-size:11px;color:var(--text-dim);border-top:1px solid var(--border-dim)}
+    footer span{color:var(--green)}
+
+    @media(max-width:640px){
+      nav{padding:0 1rem}
+      .nav-links{gap:1rem}
+      .nav-links a{font-size:10px}
+      section{padding:3.5rem 1rem}
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo">GAURAV<span>.DAMOR</span></div>
+  <ul class="nav-links">
+    <li><a href="#experience">exp</a></li>
+    <li><a href="#research">research</a></li>
+    <li><a href="#projects">projects</a></li>
+    <li><a href="#achievements">awards</a></li>
+    <li><a href="#contact">contact</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-inner">
+    <div class="prompt-line">
+      <span class="prompt-sym">~/</span>
+      <span class="prompt-path">gauravsvnit.github.io</span>
+      <span class="prompt-sym">&nbsp;$</span>
+      <span class="cursor"></span>
+    </div>
+
+    <h1 class="hero-name"><span class="accent">G</span>aurav<br>Damor</h1>
+    <p class="hero-subtitle">AI Student &nbsp;·&nbsp; SVNIT Surat &nbsp;·&nbsp; Full-stack + NLP Researcher</p>
+
+    <div class="hero-bio">
+      <span class="comment">// u24ai026 · CGPA 7.98</span><br>
+      <span class="keyword">const</span> me = {<br>
+      &nbsp;&nbsp;degree: <span class="string">"B.Tech Artificial Intelligence"</span>,<br>
+      &nbsp;&nbsp;institute: <span class="string">"SVNIT Surat"</span>,<br>
+      &nbsp;&nbsp;team: <span class="string">"Team Horizon"</span>,<br>
+      &nbsp;&nbsp;papers: <span class="number">2</span>, <span class="comment">// ACL · BHASHA 2025</span><br>
+      &nbsp;&nbsp;bestRank: <span class="string">"1st"</span>, <span class="comment">// Word Grouping Task</span><br>
+      &nbsp;&nbsp;internships: [<span class="string">"Fastrac"</span>, <span class="string">"CDAC"</span>],<br>
+      &nbsp;&nbsp;stack: [<span class="string">"Next.js"</span>, <span class="string">"Python"</span>, <span class="string">"Transformers"</span>]<br>
+      }
+    </div>
+
+    <div class="badge-row">
+      <span class="badge badge-gold">🏆 Rank 1st · BHASHA Task 2</span>
+      <span class="badge badge-green">ACL 2025 · 2 Papers</span>
+      <span class="badge badge-blue">Fastrac · CDAC Intern</span>
+      <span class="badge badge-purple">1st · Echelon 2K26 Hackathon</span>
+    </div>
+
+    <div class="cta-row">
+      <a href="#research" class="btn btn-primary">./research</a>
+      <a href="#projects" class="btn btn-ghost">./projects</a>
+      <a href="https://github.com/GAURAVSVNIT" class="btn btn-ghost" target="_blank">github ↗</a>
+    </div>
+  </div>
+</div>
+
+<!-- SKILLS -->
+<section id="skills">
+  <div class="section-label">01 / skills</div>
+  <h2 class="section-title">Technical Skills</h2>
+  <div class="divider"></div>
+  <div class="skills-grid">
+    <div class="skill-card">
+      <div class="skill-card-label">Languages</div>
+      <div class="skill-tags"><span class="tag">Python</span><span class="tag">C++</span><span class="tag">JavaScript</span><span class="tag">C</span></div>
+    </div>
+    <div class="skill-card">
+      <div class="skill-card-label">Frontend / Full-stack</div>
+      <div class="skill-tags"><span class="tag blue">Next.js</span><span class="tag blue">React</span><span class="tag blue">Node.js</span><span class="tag blue">Express.js</span></div>
+    </div>
+    <div class="skill-card">
+      <div class="skill-card-label">ML / NLP Models</div>
+      <div class="skill-tags"><span class="tag purple">MuRIL</span><span class="tag purple">XLM-R</span><span class="tag purple">mT5</span><span class="tag purple">IndicBART</span></div>
+    </div>
+    <div class="skill-card">
+      <div class="skill-card-label">Tools & Infra</div>
+      <div class="skill-tags"><span class="tag amber">Firebase</span><span class="tag amber">MongoDB</span><span class="tag amber">Git</span><span class="tag amber">Django</span></div>
+    </div>
+    <div class="skill-card">
+      <div class="skill-card-label">Cybersecurity</div>
+      <div class="skill-tags"><span class="tag">Autopsy</span><span class="tag">Nmap</span><span class="tag">Nessus</span><span class="tag">Wireshark</span></div>
+    </div>
+    <div class="skill-card">
+      <div class="skill-card-label">Domains</div>
+      <div class="skill-tags"><span class="tag blue">Indic NLP</span><span class="tag blue">Agentic AI</span><span class="tag blue">HuggingFace</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- EXPERIENCE -->
+<section id="experience">
+  <div class="section-label">02 / experience</div>
+  <h2 class="section-title">Work Experience</h2>
+  <div class="divider"></div>
+  <div class="exp-list">
+
+    <div class="exp-card blue-accent">
+      <div class="exp-header">
+        <span class="exp-role">Junior Software Development Intern</span>
+        <span class="exp-date">May 2025 – July 2025</span>
+      </div>
+      <div class="exp-company">
+        <a href="https://fastrac.id" target="_blank">Fastrac</a>, Indonesia
+        <span class="remote">Remote</span>
+      </div>
+      <ul class="exp-bullets">
+        <li>Developed and analyzed Shopify plugin workflows, contributing to API integrations and merchant onboarding features for a B2B shipping platform.</li>
+        <li>Collaborated with remote teams to debug production issues and improve UI/UX flows.</li>
+      </ul>
+    </div>
+
+    <div class="exp-card purple-accent">
+      <div class="exp-header">
+        <span class="exp-role">Junior Cyber Security Intern</span>
+        <span class="exp-date">May 2025 – July 2025</span>
+      </div>
+      <div class="exp-company">
+        <a href="https://cdac.in" target="_blank">CDAC</a>, Noida
+        <span class="remote">Remote</span>
+      </div>
+      <ul class="exp-bullets">
+        <li>Performed disk forensics on simulated threat scenarios using Autopsy and FTK Imager to recover digital evidence.</li>
+        <li>Extracted artifacts including cloud traces, search history, credentials, and user activity to build attack timelines.</li>
+        <li>Conducted network and security assessments using Nmap, Nessus, Wireshark, and Google Dorking techniques.</li>
+      </ul>
+    </div>
+
+  </div>
+</section>
+
+<!-- RESEARCH -->
+<section id="research">
+  <div class="section-label">03 / research</div>
+  <h2 class="section-title">Publications</h2>
+  <div class="divider"></div>
+
+  <div class="pub-card gold" onclick="location.href='./wg/index.html'" style="cursor:pointer">
+    <div class="pub-top">
+      <span class="pub-venue gold">BHASHA @ ACL 2025 · Task 2</span>
+      <span class="pub-rank-badge gold">🏆 Rank 1st</span>
+    </div>
+    <div class="pub-title">Fine-tuning Multilingual Transformers for Indic Word Grouping</div>
+    <div class="pub-authors">Manav Dhamecha, <strong>Gaurav Damor</strong>, Sunil Choudhary, Pruthwik Mishra · Team Horizon</div>
+    <div class="pub-abstract">BIO token-classification pipeline for Indic Local Word Groups. Fine-tuned MuRIL, XLM-R, and IndicBERT v2 with class-weighted loss. MuRIL achieves 58.18% exact match — ranked 1st among all teams at BHASHA 2025.</div>
+    <div class="pub-stats">
+      <div class="pub-stat">Best model: <span>MuRIL</span></div>
+      <div class="pub-stat">Test EM: <span>58.18%</span></div>
+    </div>
+    <div class="pub-links">
+      <a href="./wg/index.html" class="pub-link gold-l" onclick="event.stopPropagation()">view details →</a>
+      <a href="./wg/paper.pdf" class="pub-link green" onclick="event.stopPropagation()">paper.pdf</a>
+    </div>
+  </div>
+
+  <div class="pub-card blue-pub" onclick="location.href='./gec/index.html'" style="cursor:pointer">
+    <div class="pub-top">
+      <span class="pub-venue blue">BHASHA @ ACL 2025 · Task 1</span>
+      <span class="pub-rank-badge blue">Top 5–8 across languages</span>
+    </div>
+    <div class="pub-title">Multilingual IndicGEC with Transformer-based Grammatical Error Correction Models</div>
+    <div class="pub-authors">Manav Dhamecha, <strong>Gaurav Damor</strong>, Sunil Choudhary, Pruthwik Mishra · Team Horizon</div>
+    <div class="pub-abstract">GEC across 5 Indic languages using mT5-small and IndicBART with a 42-rule synthetic error-injection pipeline. Scaled training data from &lt;1k to 10k+ pairs per language.</div>
+    <div class="pub-stats">
+      <div class="pub-stat">Tamil: <span>86.03</span></div>
+      <div class="pub-stat">Malayalam: <span>84.36</span></div>
+      <div class="pub-stat">Bangla: <span>82.69</span></div>
+      <div class="pub-stat">Hindi: <span>80.44</span></div>
+    </div>
+    <div class="pub-links">
+      <a href="./gec/index.html" class="pub-link blue-l" onclick="event.stopPropagation()">view details →</a>
+      <a href="./gec/paper.pdf" class="pub-link green" onclick="event.stopPropagation()">paper.pdf</a>
+    </div>
+  </div>
+</section>
+
+<!-- PROJECTS -->
+<section id="projects">
+  <div class="section-label">04 / projects</div>
+  <h2 class="section-title">Major Projects</h2>
+  <div class="divider"></div>
+  <div class="projects-grid">
+
+    <!-- Trendora -->
+    <div class="project-card amber-proj">
+      <div class="project-header">
+        <span class="project-icon">[ FULL-STACK · AI ]</span>
+        <span class="project-arrow">↗</span>
+      </div>
+      <div class="project-name">Trendora</div>
+      <div class="project-year">2025</div>
+      <ul class="project-bullets">
+        <li>Full-stack AI fashion platform with 40+ pages — marketplace, social feed, live streaming, 3 role-based dashboards (Admin, Merchant, Fashion Creator) with custom RBAC.</li>
+        <li>Integrated Leffa diffusion model (arXiv:2412.08486) via FastAPI microservice for AI-powered virtual try-on with GPU-optimized lazy loading.</li>
+        <li>Custom P2P distributed caching with LRU eviction — reduced Firebase reads by 80%+, latency from ~100ms to ~0.1ms (99.9% speedup).</li>
+        <li>Full e-commerce stack: Razorpay payments, Shiprocket logistics, Socket.io chat, LiveKit streaming, Gemini + LangChain AI advisor.</li>
+      </ul>
+      <div class="project-tech">
+        <span class="amber-t">Next.js</span><span class="amber-t">Firebase</span><span class="amber-t">Razorpay</span><span class="amber-t">Shiprocket</span><span class="amber-t">LangChain</span><span class="blue-t">FastAPI</span><span class="blue-t">Socket.io</span>
+      </div>
+    </div>
+
+    <!-- IndyChat -->
+    <div class="project-card green-proj">
+      <div class="project-header">
+        <span class="project-icon">[ AGENTIC AI ]</span>
+        <span class="project-arrow">↗</span>
+      </div>
+      <div class="project-name">IndyChat</div>
+      <div class="project-year">2024</div>
+      <ul class="project-bullets">
+        <li>Agentic AI chatbot using Dify with tool-calling, system prompts, and multi-step reasoning — handling 15+ structured city-information query types.</li>
+        <li>Agent routing logic dynamically selects between retrieval, web search, and direct generation, reducing hallucinations by 40%.</li>
+        <li>Scaled for 870,000+ Indianapolis residents with real-time Firebase sessions, Speech-to-Text and Text-to-Speech — boosted engagement by 28%.</li>
+      </ul>
+      <div class="project-tech">
+        <span class="green-t">Next.js</span><span class="green-t">Firebase</span><span class="green-t">Framer Motion</span><span class="blue-t">Dify</span><span class="blue-t">STT/TTS</span>
+      </div>
+    </div>
+
+    <!-- Research Projects -->
+    <div class="project-card blue-proj">
+      <div class="project-header">
+        <span class="project-icon">[ NLP · ACL 2025 ]</span>
+        <span class="project-arrow">↗</span>
+      </div>
+      <div class="project-name">Indic NLP Research</div>
+      <div class="project-year">2025</div>
+      <ul class="project-bullets">
+        <li><strong style="color:var(--amber)">Word Grouping</strong> — Ranked 1st at BHASHA Task 2 with MuRIL, 58.18% exact match.</li>
+        <li><strong style="color:var(--blue)">IndicGEC</strong> — GEC across 5 Indic languages, top 5–8 ranks per language, 86.03 GLEU on Tamil.</li>
+      </ul>
+      <div class="project-tech">
+        <span class="blue-t">MuRIL</span><span class="blue-t">XLM-R</span><span class="blue-t">mT5</span><span class="blue-t">IndicBART</span><span class="blue-t">HuggingFace</span>
+      </div>
+      <div style="display:flex;gap:0.5rem;flex-wrap:wrap">
+        <a href="./wg/index.html" class="project-link">WG →</a>
+        <a href="./gec/index.html" class="project-link">GEC →</a>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ACHIEVEMENTS -->
+<section id="achievements">
+  <div class="section-label">05 / achievements</div>
+  <h2 class="section-title">Achievements</h2>
+  <div class="divider"></div>
+  <div class="achieve-grid">
+    <div class="achieve-card">
+      <div class="achieve-icon">🏆</div>
+      <div>
+        <div class="achieve-title">1st Rank — Echelon 2K26</div>
+        <div class="achieve-sub">National Level Hackathon</div>
+      </div>
+    </div>
+    <div class="achieve-card">
+      <div class="achieve-icon">🥇</div>
+      <div>
+        <div class="achieve-title">Rank 1st — BHASHA Task 2</div>
+        <div class="achieve-sub">ACL 2025 · Indic Word Grouping · All teams</div>
+      </div>
+    </div>
+    <div class="achieve-card">
+      <div class="achieve-icon">🎯</div>
+      <div>
+        <div class="achieve-title">Top 40 — MindBend Hackathon</div>
+        <div class="achieve-sub">Among 2000+ participants</div>
+      </div>
+    </div>
+    <div class="achieve-card">
+      <div class="achieve-icon">📄</div>
+      <div>
+        <div class="achieve-title">2 Papers · ACL Anthology</div>
+        <div class="achieve-sub">BHASHA 2025 · EMNLP Workshop</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- POSITIONS -->
+<section id="positions">
+  <div class="section-label">06 / positions</div>
+  <h2 class="section-title">Positions of Responsibility</h2>
+  <div class="divider"></div>
+  <div class="positions-grid">
+    <div class="position-card">
+      <div class="position-role"><span class="position-dot" style="background:var(--blue)"></span>Junior Developer</div>
+      <div class="position-org">GDG on Campus, NIT Surat</div>
+    </div>
+    <div class="position-card">
+      <div class="position-role"><span class="position-dot" style="background:var(--amber)"></span>Co-Head</div>
+      <div class="position-org">Mindbend, NIT Surat</div>
+    </div>
+    <div class="position-card">
+      <div class="position-role"><span class="position-dot" style="background:var(--green)"></span>Executive</div>
+      <div class="position-org">ACM NIT Surat</div>
+    </div>
+    <div class="position-card">
+      <div class="position-role"><span class="position-dot" style="background:var(--purple)"></span>Representative</div>
+      <div class="position-org">Nexus – DoAI Cell, NIT Surat</div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="section-label">07 / contact</div>
+  <h2 class="section-title">Get in Touch</h2>
+  <div class="divider"></div>
+  <div class="contact-grid">
+    <a href="https://github.com/GAURAVSVNIT" target="_blank" class="contact-item">
+      <svg width="15" height="15" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.44 9.8 8.2 11.38.6.1.82-.26.82-.57v-2c-3.34.73-4.04-1.6-4.04-1.6-.54-1.38-1.33-1.75-1.33-1.75-1.08-.74.08-.72.08-.72 1.2.08 1.83 1.23 1.83 1.23 1.06 1.82 2.79 1.3 3.47.99.1-.77.42-1.3.76-1.6-2.67-.3-5.47-1.33-5.47-5.93 0-1.31.47-2.38 1.24-3.22-.13-.3-.54-1.52.11-3.18 0 0 1.01-.32 3.3 1.23a11.5 11.5 0 0 1 3-.4c1.02 0 2.04.14 3 .4 2.28-1.55 3.29-1.23 3.29-1.23.65 1.66.24 2.88.12 3.18.77.84 1.23 1.91 1.23 3.22 0 4.61-2.8 5.63-5.48 5.92.43.37.82 1.1.82 2.22v3.29c0 .32.22.68.83.57C20.57 21.8 24 17.3 24 12c0-6.63-5.37-12-12-12z"/></svg>
+      github.com/GAURAVSVNIT
+    </a>
+    <a href="mailto:damgaurav04@gmail.com" class="contact-item">
+      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+      damgaurav04@gmail.com
+    </a>
+    <a href="https://linkedin.com/in/gaurav-b-damor-b1495b326" target="_blank" class="contact-item">
+      <svg width="15" height="15" fill="currentColor" viewBox="0 0 24 24"><path d="M20.45 20.45h-3.55v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.36V9h3.41v1.56h.05c.47-.9 1.63-1.85 3.36-1.85 3.6 0 4.27 2.37 4.27 5.45v6.29zM5.34 7.43a2.06 2.06 0 110-4.12 2.06 2.06 0 010 4.12zm1.78 13.02H3.56V9h3.56v11.45zM22.23 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.23.79 24 1.77 24h20.46C23.2 24 24 23.23 24 22.27V1.73C24 .77 23.2 0 22.23 0z"/></svg>
+      linkedin
+    </a>
+    <a href="https://leetcode.com/u/2OR4YWht3F" target="_blank" class="contact-item">
+      <svg width="15" height="15" fill="currentColor" viewBox="0 0 24 24"><path d="M13.483 0a1.374 1.374 0 0 0-.961.438L7.116 6.226l-3.854 4.126a5.266 5.266 0 0 0-1.209 2.104 5.35 5.35 0 0 0-.125.513 5.527 5.527 0 0 0 .062 2.362 5.83 5.83 0 0 0 .349 1.017 5.938 5.938 0 0 0 1.271 1.818l4.277 4.193.039.038c2.248 2.165 5.852 2.133 8.063-.074l2.396-2.392c.54-.54.54-1.414.003-1.955a1.378 1.378 0 0 0-1.951-.003l-2.396 2.392a3.021 3.021 0 0 1-4.205.038l-.02-.019-4.276-4.193c-.652-.64-.972-1.469-.948-2.263a2.68 2.68 0 0 1 .066-.523 2.545 2.545 0 0 1 .619-1.164L9.13 8.114c1.058-1.134 3.204-1.27 4.43-.278l3.501 2.831c.593.48 1.461.387 1.94-.207a1.384 1.384 0 0 0-.207-1.943l-3.5-2.831c-.8-.647-1.766-1.045-2.774-1.202l2.015-2.158A1.384 1.384 0 0 0 13.483 0zm-2.866 12.815a1.38 1.38 0 0 0-1.38 1.382 1.38 1.38 0 0 0 1.38 1.382H20.79a1.38 1.38 0 0 0 1.38-1.382 1.38 1.38 0 0 0-1.38-1.382z"/></svg>
+      LeetCode
+    </a>
+    <a href="https://codeforces.com/profile/damgaurav04" target="_blank" class="contact-item">
+      <svg width="15" height="15" fill="currentColor" viewBox="0 0 24 24"><path d="M4.5 7.5C5.328 7.5 6 8.172 6 9v10.5c0 .828-.672 1.5-1.5 1.5h-3C.672 21 0 20.328 0 19.5V9c0-.828.672-1.5 1.5-1.5h3zm9-4.5c.828 0 1.5.672 1.5 1.5V19.5c0 .828-.672 1.5-1.5 1.5h-3c-.828 0-1.5-.672-1.5-1.5V4.5C9 3.672 9.672 3 10.5 3h3zm9 7.5c.828 0 1.5.672 1.5 1.5v9c0 .828-.672 1.5-1.5 1.5h-3c-.828 0-1.5-.672-1.5-1.5V15c0-.828.672-1.5 1.5-1.5h3z"/></svg>
+      Codeforces
+    </a>
+    <a href="tel:+919313468430" class="contact-item">
+      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg>
+      +91 93134 68430
+    </a>
+  </div>
+</section>
+
+<footer>
+  <span>Gaurav Damor</span> &mdash; SVNIT Surat &mdash; Team Horizon &mdash; ACL · BHASHA 2025
+</footer>
+
+</body>
+</html>
